@@ -1,0 +1,33 @@
+#!/bin/bash
+
+ARGS=(-g -ga "" -a)
+FILES=(g ga rgb rgba)
+
+
+generate() {
+	for (( i = 0; i < ${#ARGS[@]}; i++ )); do
+		FILE="$FILE_PREFIX/${FILES[i]}.png"
+		pang ${ARGS[i]} "$1" $FILE && xdg-open $FILE
+	done
+}
+
+if [ "$#" -lt 1 ]; then
+	NAME=`basename $0`
+    echo "Usage: $NAME FILE [OUTPUT_PATH] | $NAME clean [OUTPUT_PATH]"
+    exit
+fi
+
+if [ "$#" -ge 2 ]; then
+	FILE_PREFIX="$2"
+else
+	FILE_PREFIX="."
+fi
+
+if [ "$1" = "clean" ]; then
+	for FILE_SUF in ${FILES[@]}; do
+		FILE="$FILE_PREFIX/$FILE_SUF.png"
+		rm $FILE
+	done
+else
+	generate "$1"
+fi
